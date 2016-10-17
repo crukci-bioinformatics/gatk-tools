@@ -105,7 +105,7 @@
                     </platforms>
                     <programs>
                         <program>
-                            <id>gatk</id>
+                            <id>run-gatk</id>
                             <mainClass>org.broadinstitute.gatk.engine.CommandLineGATK</mainClass>
                         </program>
                     </programs>
