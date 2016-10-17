@@ -6,12 +6,12 @@ variants using the framework provided by the
 
 ####Installing and running gatk-tools
 
-Please see [docs/README](README) file for more information on the utilities available
+Please see [README](docs/README) file for more information on the utilities available
 within the package and details of how to install and run the tools from a
 [pre-packaged release](https://github.com/crukci-bioinformatics/gatk-tools/releases).
 
 For more information on the utilities available in this package, and how to
-install and run these tools, please see the [docs/README](README) file.
+install and run these tools, please see the [README](docs/README) file.
 
 ####Building from source
 
