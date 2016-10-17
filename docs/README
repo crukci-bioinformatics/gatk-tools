@@ -48,7 +48,7 @@ This package contains tools developed using the GATK programming framework.
 a. Pre-requisites
 
    The following software needs to be installed:
-   - Java SE 7 or above
+   - Java SE 8 (v1.8) or above
    - GATK version 3.6 or above
 
    The tools contained in this package and GATK itself are Java applications
@@ -57,7 +57,7 @@ a. Pre-requisites
 
 java -version
 
-   The latest versions of GATK require Java 7.
+   The latest versions of GATK require Java 8 (v1.8).
 
 b. Installation the GATK tools package
 
@@ -84,11 +84,11 @@ export CLASSPATH_PREFIX=/path_to/GenomeAnalysisTK.jar
 b. Run one of the tools using the command-line wrapper script in the bin
    subdirectory within the package installation directory
 
-/path_to/gatk-tools/bin/gatk --analysis_type name_of_tool [options]
+/path_to/gatk-tools/bin/run-gatk --analysis_type name_of_tool [options]
 
    or using the abbreviated name for the tool argument
 
-/path_to/gatk-tools/bin/gatk -T name_of_tool [options]
+/path_to/gatk-tools/bin/run-gatk -T name_of_tool [options]
 
 
 4. Listing the available tools
@@ -97,7 +97,7 @@ b. Run one of the tools using the command-line wrapper script in the bin
 To list the tools available within GATK and in this package run the gatk wrapper
 with the --help option:
 
-/path_to/gatk-tools/bin/gatk --help
+/path_to/gatk-tools/bin/run-gatk --help
 
 The GATK tools are grouped within categories and the additional tools within
 this package are listed under the 'walkers' category. This command also gives
@@ -111,7 +111,7 @@ engine.
 To list the command-line options available for a specific tool run the gatk
 wrapper with both the -T option to specify the tool in question and --help
 
-/path_to/gatk-tools/bin/gatk --analysis_type name_of_tool --help
+/path_to/gatk-tools/bin/run-gatk --analysis_type name_of_tool --help
 
 
 6. GATK Walker Tools
@@ -139,7 +139,7 @@ Usage example:
 
 export CLASSPATH_PREFIX=/path_to/GenomeAnalysisTK.jar
 
-/path_to/gatk-tools/bin/gatk
+/path_to/gatk-tools/bin/run-gatk \
   --analysis_type ReadCountWalker \
   --reference_sequence homo_sapiens.fa \
   --input_file mde123.bam \
@@ -158,7 +158,7 @@ export CLASSPATH_PREFIX=/path_to/GenomeAnalysisTK.jar
 To get a detailed list of the options available, type the following and scroll
 down to the "Arguments for ReadCountWalker" section:
 
-/path_to/gatk-tools/bin/gatk --analysis_type ReadCountWalker --help
+/path_to/gatk-tools/bin/run-gatk --analysis_type ReadCountWalker --help
 
 
 6.2 CalculateSNVMetrics
@@ -172,7 +172,7 @@ VCF file.
 
 Usage example:
 
-path_to/gatk-tools/bin/gatk
+path_to/gatk-tools/bin/run-gatk \
   --analysis_type CalculateSNVMetrics \
   --reference_sequence homo_sapiens.fa \
   --countOverlappingReadPairs DISCARD_IF_DISCORDANT_OR_USE_HIGHEST_BASE_QUALITY \
