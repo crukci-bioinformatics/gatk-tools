@@ -1,0 +1,382 @@
+GATK Tools Package
+------------------
+
+Matt Eldridge
+Cancer Research UK Cambridge Institute
+University of Cambridge
+matthew.eldridge@cruk.cam.ac.uk
+
+The GATK tools package contains utilities developed using the programming
+framework provided by the Genome Analysis Toolkit (GATK).
+
+
+Contents
+--------
+
+1. Introduction
+2. Installation
+3. Running GATK tools
+4. Listing the available tools
+5. Getting help with options and arguments for a GATK tool
+6. GATK Walker Tools
+   6.1 ReadCountWalker
+   6.2 CalculateSNVMetrics
+7. Filtering based on SNV metrics
+8. License
+9. Notices
+
+
+1. Introduction
+---------------
+
+GATK is a software package developed at the Broad Insitute for the analysis of
+high-throughput sequencing (HTS) data. It contains a number of widely-used tools
+for processing sequence data and calling variants, including the HaplotypeCaller
+and MuTect2. It also provides an engine for iterating over sequencing reads,
+genomic loci or variants, that is used by the GATK tools and a framework for
+developing new tools, taking advantage of the rich and powerful functionality
+contained within GATK.
+
+More information can be found on the GATK website: https://www.broadinstitute.org/gatk
+
+This package contains tools developed using the GATK programming framework.
+
+
+2. Installation
+---------------
+
+a. Pre-requisites
+
+   The following software needs to be installed:
+   - Java SE 7 or above
+   - GATK version 3.6 or above
+
+   The tools contained in this package and GATK itself are Java applications
+   requiring a suitable Java Runtime Environment. You can test the availability
+   and version Java on your system using the following command:
+
+java -version
+
+   The latest versions of GATK require Java 7.
+
+b. Installation the GATK tools package
+
+   Unpack the tarball, substituting for the version number as appropriate:
+
+tar zxf gatk-tools-1.0-distribution.tar.gz
+
+c. Download the GATK jar file
+
+   The GATK package cannot be redistributed within this package under the terms
+   of Broad Institute Software License Agreement. Instead this needs to be
+   downloaded and unpacked separately.
+
+
+3. Running GATK tools
+---------------------
+
+a. Make the GATK jar file available on the Java classpath as follows
+   substituting the path as appropriate
+
+export CLASSPATH_PREFIX=/path_to/GenomeAnalysisTK.jar
+
+
+b. Run one of the tools using the command-line wrapper script in the bin
+   subdirectory within the package installation directory
+
+/path_to/gatk-tools/bin/gatk --analysis_type name_of_tool [options]
+
+   or using the abbreviated name for the tool argument
+
+/path_to/gatk-tools/bin/gatk -T name_of_tool [options]
+
+
+4. Listing the available tools
+------------------------------
+
+To list the tools available within GATK and in this package run the gatk wrapper
+with the --help option:
+
+/path_to/gatk-tools/bin/gatk --help
+
+The GATK tools are grouped within categories and the additional tools within
+this package are listed under the 'walkers' category. This command also gives
+details of the command-line arguments available to all tools that use the GATK
+engine.
+
+
+5. Getting help with options and arguments for a GATK tool
+----------------------------------------------------------
+
+To list the command-line options available for a specific tool run the gatk
+wrapper with both the -T option to specify the tool in question and --help
+
+/path_to/gatk-tools/bin/gatk --analysis_type name_of_tool --help
+
+
+6. GATK Walker Tools
+--------------------
+
+6.1 ReadCountWalker
+-------------------
+
+This utility computes read/base counts at various specified genomic loci using
+the read pileup functionality within GATK. It writes these out as a separate
+row for each locus with columns for the depth and for each base, as an
+alternative to the output from the pileup tools available in both GATK and
+samtools. It requires one or more BAM files as input.
+
+The tool can be run in a number of different modes depending on the command line
+arguments specified. For example, it can generate read counts for all loci
+covered by reads within the given BAM file(s) or for those within given
+intervals. Or it can work on the loci for SNV variants in a specified VCF file,
+where optionally the output columns can be for the reference and alternate
+alleles. Finally, the tool can be used to identify loci where there is variation
+in either a single sample or among multiple samples subject to user-specified
+criteria.
+
+Usage example:
+
+export CLASSPATH_PREFIX=/path_to/GenomeAnalysisTK.jar
+
+/path_to/gatk-tools/bin/gatk
+  --analysis_type ReadCountWalker \
+  --reference_sequence homo_sapiens.fa \
+  --input_file mde123.bam \
+  --output_file readcounts.txt \
+  --sample MDE123 \
+  --intervals mde123.vcf \
+  --variantsFile mde123.vcf \
+  --minimumMappingQuality 10 \
+  --minimumBaseQuality 30 \
+  --outputUnfilteredDepth \
+  --outputDepth \
+  --outputACGTCounts \
+  --outputAlleleFraction \
+  --outputSeparateStrandCounts
+
+To get a detailed list of the options available, type the following and scroll
+down to the "Arguments for ReadCountWalker" section:
+
+/path_to/gatk-tools/bin/gatk --analysis_type ReadCountWalker --help
+
+
+6.2 CalculateSNVMetrics
+-----------------------
+
+Computes various metrics for SNVs within a VCF file from variant-supporting and
+reference sequence reads within given BAM file(s).
+
+Values for the metrics computed are included in the INFO column of the output
+VCF file.
+
+Usage example:
+
+path_to/gatk-tools/bin/gatk
+  --analysis_type CalculateSNVMetrics \
+  --reference_sequence homo_sapiens.fa \
+  --countOverlappingReadPairs DISCARD_IF_DISCORDANT_OR_USE_HIGHEST_BASE_QUALITY \
+  --intervals snv.vcf \
+  --variant snv.vcf \
+  --input_file tumour.bam \
+  --input_file control.bam \
+  --sample tumour123 \
+  --controlSample control123 \
+  --minimumMappingQuality 1 \
+  --minimumBaseQuality 10 \
+  --out snv.metrics.vcf
+
+The reference-supporting reads used in computing a number of these metrics are
+taken from the control sample(s) if specified, otherwise from the sample(s)
+specified with the --sample option or from all samples if neither --sample or
+--controlSample are specified.
+
+The following metrics are computed for each SNV:
+
+Depth
+  The number of reads covering the variant position including duplicates,
+  supplementary records, reads that fall below minimum base and mapping quality
+  thresholds, and from overlapping fragments.
+
+ReadCount
+  The number of reads covering the variant position excluding duplicates,
+  supplementary records and reads that fall below minimum base and mapping
+  quality thresholds.
+
+VariantAlleleCount
+  The variant allele count, i.e. the number of reads supporting the variant
+   allele.
+
+VariantAlleleFrequency
+  The variant allele frequency, i.e. the fraction of reads supporting the
+  variant allele.
+
+ReadCountControl
+  The number of reads covering the variant position in the control sample(s)
+  excluding duplicates, supplementary records and reads that fall below minimum
+  base and mapping quality thresholds.
+
+VariantAlleleCountControl
+  The variant allele count in the control sample(s).
+
+StrandBias
+  The strand bias for all reads covering the variant position.
+
+VariantStrandBias
+  The strand bias for variant-supporting reads.
+
+ReferenceStrandBias
+  The strand bias for reference-supporting reads.
+
+LowMapQual
+  The proportion of all reads from all samples at the variant position that have
+  low mapping quality (less than the specified minimumMappingQuality).
+
+VariantBaseQual
+  The mean base quality at the variant position of variant reads.
+
+VariantBaseQualMedian
+  The median base quality at the variant position of variant reads.
+
+VariantMapQual
+  The mean mapping quality of variant reads.
+
+VariantMapQualMedian
+  The median mapping quality of variant reads.
+
+MapQualDiff
+  The difference in the mean mapping quality of variant and reference reads.
+
+MapQualDiffMedian
+  The difference in the median mapping quality of variant and reference reads.
+
+VariantMMQS
+  The mean mismatch quality sum for variant reads.
+
+VariantMMQSMedian
+  The median mismatch quality sum for variant reads.
+
+MMQSDiff
+  The difference in mean mismatch quality sum of variant and reference reads.
+
+MMQSDiffMedian
+  The difference in median mismatch quality sum of variant and reference reads.
+
+DistanceToAlignmentEnd
+  The mean shortest distance of the variant position within the read to either aligned end.
+
+DistanceToAlignmentEndMedian
+  The median shortest distance of the variant position within the read to either aligned end.
+
+DistanceToAlignmentEndMAD
+  The median absolute deviation of the shortest distance of the variant position within the read to either aligned end.
+
+HomopolymerLength
+  The longest continuous homopolymer surrounding or adjacent to the variant position.
+
+Repeat
+  The length of repetitive sequence adjacent to the variant position where repeats can be 1-, 2-, 3- or 4-mers.
+
+
+7. Filtering based on SNV metrics
+---------------------------------
+
+The GATK VariantFiltration tool can be used to filter variants based on the SNV
+metrics computed using CalculateSNVMetrics.
+
+Based on alignment with BWA MEM for whole genome sequencing datasets, the
+following filters are recommended for MuTect2 and Strelka variant callers.
+
+These filters have been tuned using the ICGC benchmark datasets from Alioto et
+al., Nature Commun. 2015, 6:10001 (http://www.ncbi.nlm.nih.gov/pubmed/26647970)
+and tested on synthetic datasets from the ICGC-TCGA DREAM Mutation Calling
+challenge (https://www.synapse.org/#!Synapse:syn312572).
+
+MuTect2 filters (more stringent for higher precision):
+
+java -jar GenomeAnalysisTK.jar \
+  -T VariantFiltration \
+  -R reference.fasta \
+  -o output.vcf \
+  --variant input.vcf \
+	--filterName VariantAlleleCount \
+	--filterExpression "VariantAlleleCount < 4" \
+	--filterName VariantAlleleCountControl \
+	--filterExpression "VariantAlleleCountControl > 1" \
+	--filterName VariantMapQualMedian \
+	--filterExpression "VariantMapQualMedian < 40.0" \
+	--filterName MapQualDiffMedian \
+	--filterExpression "MapQualDiffMedian < -5.0 || MapQualDiffMedian > 5.0" \
+	--filterName LowMapQual \
+	--filterExpression "LowMapQual > 0.05" \
+	--filterName VariantBaseQualMedian \
+	--filterExpression "VariantBaseQualMedian < 30.0" \
+	--filterName StrandBias \
+	--filterExpression "VariantAlleleCount >= 7 && VariantStrandBias < 0.05 && ReferenceStrandBias >= 0.2"
+
+MuTect2 filters (less stringent for higher recall at expense of precision):
+
+java -jar GenomeAnalysisTK.jar \
+  -T VariantFiltration \
+  -R reference.fasta \
+  -o output.vcf \
+  --variant input.vcf \
+	--filterName VariantAlleleCount \
+	--filterExpression "VariantAlleleCount < 3" \
+	--filterName VariantAlleleCountControl \
+	--filterExpression "VariantAlleleCountControl > 1" \
+	--filterName VariantMapQualMedian \
+	--filterExpression "VariantMapQualMedian < 40.0" \
+	--filterName MapQualDiffMedian \
+	--filterExpression "MapQualDiffMedian < -5.0 || MapQualDiffMedian > 5.0" \
+	--filterName LowMapQual \
+	--filterExpression "LowMapQual > 0.05" \
+	--filterName VariantBaseQualMedian \
+	--filterExpression "VariantBaseQualMedian < 25.0"
+
+Strelka filters (includes position in read filter):
+
+java -jar GenomeAnalysisTK.jar \
+  -T VariantFiltration \
+  -R reference.fasta \
+  -o output.vcf \
+  --variant input.vcf \
+	--filterName VariantAlleleCount \
+	--filterExpression "VariantAlleleCount < 4" \
+	--filterName VariantAlleleCountControl \
+	--filterExpression "VariantAlleleCountControl > 1" \
+	--filterName VariantMapQualMedian \
+	--filterExpression "VariantMapQualMedian < 40.0" \
+	--filterName MapQualDiffMedian \
+	--filterExpression "MapQualDiffMedian < -5.0 || MapQualDiffMedian > 5.0" \
+	--filterName LowMapQual \
+	--filterExpression "LowMapQual > 0.05" \
+	--filterName VariantBaseQualMedian \
+	--filterExpression "VariantBaseQualMedian < 30.0" \
+	--filterName StrandBias \
+	--filterExpression "VariantAlleleCount >= 7 && VariantStrandBias < 0.05 && ReferenceStrandBias >= 0.2" \
+	--filterName DistanceToAlignmentEndMedian \
+	--filterExpression "DistanceToAlignmentEndMedian < 10.0" \
+	--filterName DistanceToAlignmentEndMAD \
+	--filterExpression "DistanceToAlignmentEndMAD < 3.0"
+
+
+8. License
+----------
+
+gatk-tools is made available under the MIT License (see separate LICENSE file).
+
+
+9. Notices
+----------
+
+gatk-tools is packaged with the following software covered under separate
+licenses:
+
+The Apache Commons Mathematics Library (commons-math3)
+developed at The Apache Software Foundation (http://www.apache.org/)
+and made available under the Apache License v2.0.
+Please see the LICENSE.txt file included in the commons-math3 jar file for
+the Apache License v2.0 text and further attribution and copyright notices
+associated with the Apache Commons Mathematics Library.
+
