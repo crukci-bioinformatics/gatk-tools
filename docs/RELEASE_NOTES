@@ -1,3 +1,13 @@
+Version 0.2 (17 October 2016)
+-----------
+
+* Migrated from private subversion repository to github, added license
+  file and notices.
+
+* Added less stringent filter recommendations for MuTect2 somatic SNV calls
+  to README.
+
+
 Version 0.1.3 (5 July 2016)
 -------------
 
