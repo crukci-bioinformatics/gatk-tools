@@ -56,7 +56,7 @@ import org.broadinstitute.gatk.utils.sam.GATKSAMRecord;
 
 import htsjdk.samtools.AlignmentBlock;
 import htsjdk.samtools.SAMRecord;
-import htsjdk.samtools.reference.IndexedFastaSequenceFile;
+import htsjdk.samtools.reference.ReferenceSequenceFile;
 import htsjdk.samtools.util.SequenceUtil;
 import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.VariantContext;
@@ -166,7 +166,7 @@ public class CalculateSNVMetrics extends LocusWalker<Integer, Integer>
         RETAIN_HIGHEST_BASE_QUALITY
     }
 
-    private IndexedFastaSequenceFile referenceSequence;
+    private ReferenceSequenceFile referenceSequence;
 
     /**
      * Initialization of count data structures, output header and read variants.
