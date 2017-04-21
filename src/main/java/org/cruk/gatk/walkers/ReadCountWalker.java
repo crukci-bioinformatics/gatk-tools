@@ -231,7 +231,7 @@ public class ReadCountWalker extends LocusWalker<Integer, Long> implements Pileu
                 if (getSampleDB().getSample(sample) == null)
                 {
                     String message = "Unrecognized sample: " + sample;
-                	logger.error(message);
+                    logger.error(message);
                     throw new RuntimeException(message);
                 }
                 if (sampleSet.contains(sample)) continue;
@@ -359,14 +359,14 @@ public class ReadCountWalker extends LocusWalker<Integer, Long> implements Pileu
             if (subtokens.length != 2)
             {
                 String message = "Incorrect format for " + name + " parameter: " + values;
-            	logger.error(message);
+                logger.error(message);
                 throw new RuntimeException(message);
             }
             String sample = subtokens[0];
             if (!lookup.containsKey(sample))
             {
                 String message = "Unrecognized sample " + sample + " in setting for " + name + ": " + values;
-            	logger.error(message);
+                logger.error(message);
                 throw new RuntimeException(message);
             }
             try
@@ -377,7 +377,7 @@ public class ReadCountWalker extends LocusWalker<Integer, Long> implements Pileu
             catch (NumberFormatException e)
             {
                 String message = "Incorrect format for " + name + " parameter (expecting integer values): " + values;
-            	logger.error(message);
+                logger.error(message);
                 throw new RuntimeException(message);
             }
         }
@@ -612,7 +612,7 @@ public class ReadCountWalker extends LocusWalker<Integer, Long> implements Pileu
                     if (referenceBase != variant.getReferenceBase())
                     {
                         String message = "Reference base at " + chromosome + ":" + position + " differs in the reference sequence (" + referenceBase + ") and variant file (" + variant.getReferenceBase() + ")";
-                    	logger.error(message);
+                        logger.error(message);
                         throw new RuntimeException(message);
                     }
                     outputVariantReadCounts(chromosome, position, referenceBase, variant);
