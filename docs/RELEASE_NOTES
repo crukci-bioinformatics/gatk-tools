@@ -1,3 +1,15 @@
+Version 0.2.2 (21 April 2017)
+-------------
+
+* Fixed error in computing the filtered depth in the control, ReadCountControl;
+  was previously giving the number of reference-supporting reads in the control
+  rather than all filtered reads covering the variant position.
+
+* Added new DepthControl and VariantAlleleFrequencyControl metrics for the
+  unfiltered depth and the variant allele frequency in the control for a
+  given variant.
+
+
 Version 0.2.1 (7 February 2017)
 -------------
 
