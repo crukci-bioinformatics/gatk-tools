@@ -194,14 +194,12 @@ specified with the --sample option or from all samples if neither --sample or
 The following metrics are computed for each SNV:
 
 Depth
-  The number of reads covering the variant position including duplicates,
-  supplementary records, reads that fall below minimum base and mapping quality
-  thresholds, and from overlapping fragments.
+  The number of reads covering the variant position including duplicates and
+  reads that fall below minimum base and mapping quality thresholds.
 
 ReadCount
-  The number of reads covering the variant position excluding duplicates,
-  supplementary records and reads that fall below minimum base and mapping
-  quality thresholds.
+  The number of reads covering the variant position excluding duplicates and
+  reads that fall below minimum base and mapping quality thresholds.
 
 VariantAlleleCount
   The variant allele count, i.e. the number of reads supporting the variant
@@ -211,10 +209,15 @@ VariantAlleleFrequency
   The variant allele frequency, i.e. the fraction of reads supporting the
   variant allele.
 
+DepthControl
+  The number of reads covering the variant position in the control sample(s)
+  including duplicates and reads that fall below minimum base and mapping
+  quality thresholds
+
 ReadCountControl
   The number of reads covering the variant position in the control sample(s)
-  excluding duplicates, supplementary records and reads that fall below minimum
-  base and mapping quality thresholds.
+  excluding duplicates and reads that fall below minimum base and mapping
+  quality thresholds.
 
 VariantAlleleCountControl
   The variant allele count in the control sample(s).
@@ -299,20 +302,20 @@ java -jar GenomeAnalysisTK.jar \
   -R reference.fasta \
   -o output.vcf \
   --variant input.vcf \
-	--filterName VariantAlleleCount \
-	--filterExpression "VariantAlleleCount < 4" \
-	--filterName VariantAlleleCountControl \
-	--filterExpression "VariantAlleleCountControl > 1" \
-	--filterName VariantMapQualMedian \
-	--filterExpression "VariantMapQualMedian < 40.0" \
-	--filterName MapQualDiffMedian \
-	--filterExpression "MapQualDiffMedian < -5.0 || MapQualDiffMedian > 5.0" \
-	--filterName LowMapQual \
-	--filterExpression "LowMapQual > 0.05" \
-	--filterName VariantBaseQualMedian \
-	--filterExpression "VariantBaseQualMedian < 30.0" \
-	--filterName StrandBias \
-	--filterExpression "VariantAlleleCount >= 7 && VariantStrandBias < 0.05 && ReferenceStrandBias >= 0.2"
+  --filterName VariantAlleleCount \
+  --filterExpression "VariantAlleleCount < 4" \
+  --filterName VariantAlleleCountControl \
+  --filterExpression "VariantAlleleCountControl > 1" \
+  --filterName VariantMapQualMedian \
+  --filterExpression "VariantMapQualMedian < 40.0" \
+  --filterName MapQualDiffMedian \
+  --filterExpression "MapQualDiffMedian < -5.0 || MapQualDiffMedian > 5.0" \
+  --filterName LowMapQual \
+  --filterExpression "LowMapQual > 0.05" \
+  --filterName VariantBaseQualMedian \
+  --filterExpression "VariantBaseQualMedian < 30.0" \
+  --filterName StrandBias \
+  --filterExpression "VariantAlleleCount >= 7 && VariantStrandBias < 0.05 && ReferenceStrandBias >= 0.2"
 
 MuTect2 filters (less stringent for higher recall at expense of precision):
 
@@ -321,18 +324,18 @@ java -jar GenomeAnalysisTK.jar \
   -R reference.fasta \
   -o output.vcf \
   --variant input.vcf \
-	--filterName VariantAlleleCount \
-	--filterExpression "VariantAlleleCount < 3" \
-	--filterName VariantAlleleCountControl \
-	--filterExpression "VariantAlleleCountControl > 1" \
-	--filterName VariantMapQualMedian \
-	--filterExpression "VariantMapQualMedian < 40.0" \
-	--filterName MapQualDiffMedian \
-	--filterExpression "MapQualDiffMedian < -5.0 || MapQualDiffMedian > 5.0" \
-	--filterName LowMapQual \
-	--filterExpression "LowMapQual > 0.05" \
-	--filterName VariantBaseQualMedian \
-	--filterExpression "VariantBaseQualMedian < 25.0"
+  --filterName VariantAlleleCount \
+  --filterExpression "VariantAlleleCount < 3" \
+  --filterName VariantAlleleCountControl \
+  --filterExpression "VariantAlleleCountControl > 1" \
+  --filterName VariantMapQualMedian \
+  --filterExpression "VariantMapQualMedian < 40.0" \
+  --filterName MapQualDiffMedian \
+  --filterExpression "MapQualDiffMedian < -5.0 || MapQualDiffMedian > 5.0" \
+  --filterName LowMapQual \
+  --filterExpression "LowMapQual > 0.05" \
+  --filterName VariantBaseQualMedian \
+  --filterExpression "VariantBaseQualMedian < 25.0"
 
 Strelka filters (includes position in read filter):
 
@@ -341,24 +344,24 @@ java -jar GenomeAnalysisTK.jar \
   -R reference.fasta \
   -o output.vcf \
   --variant input.vcf \
-	--filterName VariantAlleleCount \
-	--filterExpression "VariantAlleleCount < 4" \
-	--filterName VariantAlleleCountControl \
-	--filterExpression "VariantAlleleCountControl > 1" \
-	--filterName VariantMapQualMedian \
-	--filterExpression "VariantMapQualMedian < 40.0" \
-	--filterName MapQualDiffMedian \
-	--filterExpression "MapQualDiffMedian < -5.0 || MapQualDiffMedian > 5.0" \
-	--filterName LowMapQual \
-	--filterExpression "LowMapQual > 0.05" \
-	--filterName VariantBaseQualMedian \
-	--filterExpression "VariantBaseQualMedian < 30.0" \
-	--filterName StrandBias \
-	--filterExpression "VariantAlleleCount >= 7 && VariantStrandBias < 0.05 && ReferenceStrandBias >= 0.2" \
-	--filterName DistanceToAlignmentEndMedian \
-	--filterExpression "DistanceToAlignmentEndMedian < 10.0" \
-	--filterName DistanceToAlignmentEndMAD \
-	--filterExpression "DistanceToAlignmentEndMAD < 3.0"
+  --filterName VariantAlleleCount \
+  --filterExpression "VariantAlleleCount < 4" \
+  --filterName VariantAlleleCountControl \
+  --filterExpression "VariantAlleleCountControl > 1" \
+  --filterName VariantMapQualMedian \
+  --filterExpression "VariantMapQualMedian < 40.0" \
+  --filterName MapQualDiffMedian \
+  --filterExpression "MapQualDiffMedian < -5.0 || MapQualDiffMedian > 5.0" \
+  --filterName LowMapQual \
+  --filterExpression "LowMapQual > 0.05" \
+  --filterName VariantBaseQualMedian \
+  --filterExpression "VariantBaseQualMedian < 30.0" \
+  --filterName StrandBias \
+  --filterExpression "VariantAlleleCount >= 7 && VariantStrandBias < 0.05 && ReferenceStrandBias >= 0.2" \
+  --filterName DistanceToAlignmentEndMedian \
+  --filterExpression "DistanceToAlignmentEndMedian < 10.0" \
+  --filterName DistanceToAlignmentEndMAD \
+  --filterExpression "DistanceToAlignmentEndMAD < 3.0"
 
 
 8. License
