@@ -108,18 +108,18 @@ public class CalculateSNVMetrics extends LocusWalker<Integer, Integer>
 
     private class BasePileupElementFilter implements PileupElementFilter
     {
-    	private byte base;
+        private byte base;
 
-    	public BasePileupElementFilter(byte base)
-    	{
-    		this.base = base;
-    	}
+        public BasePileupElementFilter(byte base)
+        {
+            this.base = base;
+        }
 
-    	@Override
-		public boolean allow(PileupElement pileupElement)
-    	{
-    		return pileupElement.getBase() == base;
-		}
+        @Override
+        public boolean allow(PileupElement pileupElement)
+        {
+            return pileupElement.getBase() == base;
+        }
     }
 
     /**
@@ -130,10 +130,10 @@ public class CalculateSNVMetrics extends LocusWalker<Integer, Integer>
      * for excluding supplementary alignments.
      */
     private PileupElementFilter supplementaryAlignmentFilter = new PileupElementFilter() {
-    	@Override
-		public boolean allow(PileupElement pileupElement) {
-    		return !excludeSupplementaryAlignments || !pileupElement.getRead().getSupplementaryAlignmentFlag();
-		}
+        @Override
+        public boolean allow(PileupElement pileupElement) {
+            return !excludeSupplementaryAlignments || !pileupElement.getRead().getSupplementaryAlignmentFlag();
+        }
     };
 
     /**
@@ -173,9 +173,9 @@ public class CalculateSNVMetrics extends LocusWalker<Integer, Integer>
      */
     public void initialize()
     {
-    	initializeSamples();
-    	writeVCFHeader();
-    	referenceSequence = getToolkit().getReferenceDataSource().getReference();
+        initializeSamples();
+        writeVCFHeader();
+        referenceSequence = getToolkit().getReferenceDataSource().getReference();
     }
 
     /**
@@ -183,16 +183,16 @@ public class CalculateSNVMetrics extends LocusWalker<Integer, Integer>
      */
     private void initializeSamples()
     {
-    	HashSet<String> allSamples = new HashSet<String>(getSampleDB().getSampleNames());
+        HashSet<String> allSamples = new HashSet<String>(getSampleDB().getSampleNames());
 
-    	if (samples == null || samples.isEmpty())
-    		samples = allSamples;
-    	else
-    		checkSamples(samples, allSamples);
+        if (samples == null || samples.isEmpty())
+            samples = allSamples;
+        else
+            checkSamples(samples, allSamples);
 
-    	if (controlSamples == null)
-    		controlSamples = new HashSet<String>();
-		checkSamples(controlSamples, allSamples);
+        if (controlSamples == null)
+            controlSamples = new HashSet<String>();
+        checkSamples(controlSamples, allSamples);
     }
 
     /**
@@ -205,9 +205,9 @@ public class CalculateSNVMetrics extends LocusWalker<Integer, Integer>
     {
         for (String sample : samples)
         {
-        	if (!allSamples.contains(sample))
+            if (!allSamples.contains(sample))
             {
-        		String message = "Unrecognized sample: " + sample;
+                String message = "Unrecognized sample: " + sample;
                 logger.error(message);
                 throw new RuntimeException(message);
             }
@@ -226,15 +226,17 @@ public class CalculateSNVMetrics extends LocusWalker<Integer, Integer>
 
         Set<VCFHeaderLine> headerLines = VCFUtils.smartMergeHeaders(vcfRods.values(), true);
 
-        headerLines.add(new VCFInfoHeaderLine("Depth", 1, VCFHeaderLineType.Integer, "The number of reads covering the variant position including duplicates, supplementary records, reads that fall below minimum base and mapping quality thresholds, and from overlapping fragments."));
-        headerLines.add(new VCFInfoHeaderLine("ReadCount", 1, VCFHeaderLineType.Integer, "The number of reads covering the variant position excluding duplicates, supplementary records and reads that fall below minimum base and mapping quality thresholds."));
+        headerLines.add(new VCFInfoHeaderLine("Depth", 1, VCFHeaderLineType.Integer, "The number of reads covering the variant position including duplicates and reads that fall below minimum base and mapping quality thresholds."));
+        headerLines.add(new VCFInfoHeaderLine("ReadCount", 1, VCFHeaderLineType.Integer, "The number of reads covering the variant position excluding duplicates and reads that fall below minimum base and mapping quality thresholds."));
         headerLines.add(new VCFInfoHeaderLine("VariantAlleleCount", 1, VCFHeaderLineType.Integer, "The variant allele count, i.e. the number of reads supporting the variant allele."));
         headerLines.add(new VCFInfoHeaderLine("VariantAlleleFrequency", 1, VCFHeaderLineType.Float, "The variant allele frequency, i.e. the fraction of reads supporting the variant allele."));
 
         if (!controlSamples.isEmpty())
         {
-        	headerLines.add(new VCFInfoHeaderLine("ReadCountControl", 1, VCFHeaderLineType.Integer, "The number of reads covering the variant position in the control sample(s) excluding duplicates, supplementary records and reads that fall below minimum base and mapping quality thresholds."));
-        	headerLines.add(new VCFInfoHeaderLine("VariantAlleleCountControl", 1, VCFHeaderLineType.Integer, "The variant allele count in the control sample(s)."));
+            headerLines.add(new VCFInfoHeaderLine("DepthControl", 1, VCFHeaderLineType.Integer, "The number of reads covering the variant position in the control sample(s) including duplicates and reads that fall below minimum base and mapping quality thresholds."));
+            headerLines.add(new VCFInfoHeaderLine("ReadCountControl", 1, VCFHeaderLineType.Integer, "The number of reads covering the variant position in the control sample(s) excluding duplicates and reads that fall below minimum base and mapping quality thresholds."));
+            headerLines.add(new VCFInfoHeaderLine("VariantAlleleCountControl", 1, VCFHeaderLineType.Integer, "The variant allele count in the control sample(s)."));
+            headerLines.add(new VCFInfoHeaderLine("VariantAlleleFrequencyControl", 1, VCFHeaderLineType.Float, "The variant allele frequency in the control sample(s)."));
         }
 
         headerLines.add(new VCFInfoHeaderLine("StrandBias", 1, VCFHeaderLineType.Float, "The strand bias for all reads covering the variant position."));
@@ -268,17 +270,17 @@ public class CalculateSNVMetrics extends LocusWalker<Integer, Integer>
 
     private ReadBackedPileup filterSamples(ReadBackedPileup pileup, Collection<String> samplesToInclude)
     {
-    	HashSet<String> samples = new HashSet<String>(pileup.getSamples());
-    	samples.retainAll(samplesToInclude);
-    	if (samples.isEmpty())
-    		return new ReadBackedPileupImpl(pileup.getLocation());
-    	else
-    		return pileup.getPileupForSamples(samples);
+        HashSet<String> samples = new HashSet<String>(pileup.getSamples());
+        samples.retainAll(samplesToInclude);
+        if (samples.isEmpty())
+            return new ReadBackedPileupImpl(pileup.getLocation());
+        else
+            return pileup.getPileupForSamples(samples);
     }
 
     @Override
-	public Integer map(RefMetaDataTracker tracker, ReferenceContext ref, AlignmentContext context)
-	{
+    public Integer map(RefMetaDataTracker tracker, ReferenceContext ref, AlignmentContext context)
+    {
         String chromosome = context.getContig();
         long position = context.getPosition();
         byte referenceBase = ref.getBase();
@@ -288,12 +290,16 @@ public class CalculateSNVMetrics extends LocusWalker<Integer, Integer>
 
         for (VariantContext variant : variants)
         {
-        	if (variant.isSNP())
-        	{
-        		ReadBackedPileup pileup = context.getBasePileup();
-        		pileup = pileup.getFilteredPileup(supplementaryAlignmentFilter);
+            if (variant.isSNP())
+            {
+                ReadBackedPileup pileup = context.getBasePileup();
+                pileup = pileup.getFilteredPileup(supplementaryAlignmentFilter);
 
-        		variant.getCommonInfo().putAttribute("Depth", filterSamples(pileup, samples).depthOfCoverage());
+                variant.getCommonInfo().putAttribute("Depth", filterSamples(pileup, samples).depthOfCoverage());
+                if (!controlSamples.isEmpty())
+                {
+                    variant.getCommonInfo().putAttribute("DepthControl", filterSamples(pileup, controlSamples).depthOfCoverage());
+                }
 
                 int unfilteredReadCount = pileup.getBases().length;
 
@@ -309,9 +315,9 @@ public class CalculateSNVMetrics extends LocusWalker<Integer, Integer>
                 pileup = pileup.getBaseFilteredPileup(minimumBaseQuality);
 
                 // apply filter for overlapping fragments
-         		pileup = filterOverlappingFragements(pileup);
+                pileup = filterOverlappingFragements(pileup);
 
-         		// apply filter for the specified sample(s)
+                // apply filter for the specified sample(s)
                 ReadBackedPileup samplePileup = filterSamples(pileup, samples);
 
                 // collect reference metrics from control samples if these exist,
@@ -324,8 +330,8 @@ public class CalculateSNVMetrics extends LocusWalker<Integer, Integer>
 
                 if (!variant.getReference().basesMatch(ref.getBases()))
                 {
-                	String message = "Mismatching reference base for variant " + getDisplayString(variant);
-                	logger.error(message);
+                    String message = "Mismatching reference base for variant " + getDisplayString(variant);
+                    logger.error(message);
                     throw new RuntimeException(message);
                 }
                 int referenceBaseIndex = BaseUtils.simpleBaseToBaseIndex(referenceBase);
@@ -341,15 +347,19 @@ public class CalculateSNVMetrics extends LocusWalker<Integer, Integer>
                 variant.getCommonInfo().putAttribute("VariantAlleleCount", variantReadCount);
                 if (readCount > 0)
                 {
-                	variant.getCommonInfo().putAttribute("VariantAlleleFrequency", variantReadCount / (double)readCount);
+                    variant.getCommonInfo().putAttribute("VariantAlleleFrequency", variantReadCount / (double)readCount);
                 }
 
-                int referenceReadCount = referencePileup.getBaseCounts()[referenceBaseIndex];
-
+                int referenceReadCount = referencePileup.getBases().length;
                 if (!controlSamples.isEmpty())
                 {
                     variant.getCommonInfo().putAttribute("ReadCountControl", referenceReadCount);
-                    variant.getCommonInfo().putAttribute("VariantAlleleCountControl", referencePileup.getBaseCounts()[variantAlleleIndex]);
+                    int variantReadCountControl = referencePileup.getBaseCounts()[variantAlleleIndex];
+                    variant.getCommonInfo().putAttribute("VariantAlleleCountControl", variantReadCountControl);
+                    if (referenceReadCount > 0)
+                    {
+                        variant.getCommonInfo().putAttribute("VariantAlleleFrequencyControl", variantReadCountControl / (double)referenceReadCount);
+                    }
                 }
 
                 ReadBackedPileup negativeStrandPileup = samplePileup.getNegativeStrandPileup();
@@ -384,10 +394,10 @@ public class CalculateSNVMetrics extends LocusWalker<Integer, Integer>
                 ReadBackedPileup variantAllelePileup = samplePileup.getFilteredPileup(new BasePileupElementFilter(variantAllele));
                 for (PileupElement pileupElement : variantAllelePileup)
                 {
-                	variantBaseQualityStatistics.addValue(pileupElement.getQual());
-                	variantMappingQualityStatistics.addValue(pileupElement.getMappingQual());
-                	variantMMQSStatistics.addValue(getMismatchQualitySum(pileupElement.getRead(), position));
-                	variantDistanceToAlignmentEndStatistics.addValue(getDistanceToAlignmentEnd(chromosome, position, pileupElement));
+                    variantBaseQualityStatistics.addValue(pileupElement.getQual());
+                    variantMappingQualityStatistics.addValue(pileupElement.getMappingQual());
+                    variantMMQSStatistics.addValue(getMismatchQualitySum(pileupElement.getRead(), position));
+                    variantDistanceToAlignmentEndStatistics.addValue(getDistanceToAlignmentEnd(chromosome, position, pileupElement));
                 }
 
                 if (variantBaseQualityStatistics.getN() > 0)
@@ -408,8 +418,8 @@ public class CalculateSNVMetrics extends LocusWalker<Integer, Integer>
                 ReadBackedPileup referenceBasePileup = referencePileup.getFilteredPileup(new BasePileupElementFilter(referenceBase));
                 for (PileupElement pileupElement : referenceBasePileup)
                 {
-                	referenceMappingQualityStatistics.addValue(pileupElement.getMappingQual());
-                	referenceMMQSStatistics.addValue(getMismatchQualitySum(pileupElement.getRead(), position));
+                    referenceMappingQualityStatistics.addValue(pileupElement.getMappingQual());
+                    referenceMMQSStatistics.addValue(getMismatchQualitySum(pileupElement.getRead(), position));
                 }
 
                 if (variantMappingQualityStatistics.getN() > 0 && referenceMappingQualityStatistics.getN() > 0)
@@ -438,25 +448,25 @@ public class CalculateSNVMetrics extends LocusWalker<Integer, Integer>
 
                 variant.getCommonInfo().putAttribute("HomopolymerLength", getHomopolymerLength(chromosome, position));
                 variant.getCommonInfo().putAttribute("Repeat", getRepeatLength(chromosome, position));
-        	}
+            }
 
-        	vcfWriter.add(variant);
+            vcfWriter.add(variant);
         }
 
         return 1;
-	}
+    }
 
-	@Override
-	public Integer reduce(Integer value, Integer sum)
-	{
-		return sum + value;
-	}
+    @Override
+    public Integer reduce(Integer value, Integer sum)
+    {
+        return sum + value;
+    }
 
-	@Override
-	public Integer reduceInit()
-	{
-		return 0;
-	}
+    @Override
+    public Integer reduceInit()
+    {
+        return 0;
+    }
 
     public void onTraversalDone(Integer result)
     {
@@ -556,7 +566,7 @@ public class CalculateSNVMetrics extends LocusWalker<Integer, Integer>
             int referenceBlockStart = referenceStart - alignmentStart;
             for (int i = 0; i < block.getLength(); i++)
             {
-            	if ((referenceStart + i) == excludePosition) continue;
+                if ((referenceStart + i) == excludePosition) continue;
                 byte referenceBase = referenceBases[referenceBlockStart + i];
                 byte readBase = readBases[readBlockStart + i];
                 if (!SequenceUtil.isNoCall(readBase) && !SequenceUtil.isNoCall(referenceBase) && !SequenceUtil.basesEqual(readBase, referenceBase))
@@ -580,18 +590,18 @@ public class CalculateSNVMetrics extends LocusWalker<Integer, Integer>
      */
     private int getDistanceToAlignmentEnd(String chromosome, long position, PileupElement pileupElement)
     {
-    	GATKSAMRecord record = pileupElement.getRead();
-    	int positionInRead = pileupElement.getOffset() + 1;
-    	if (positionInRead != getPositionInRead(record, position))
-    		logger.warn("Mismatching variant position within read");
+        GATKSAMRecord record = pileupElement.getRead();
+        int positionInRead = pileupElement.getOffset() + 1;
+        if (positionInRead != getPositionInRead(record, position))
+            logger.warn("Mismatching variant position within read");
         int alignedStartPositionInRead = getPositionInRead(record, record.getAlignmentStart());
         int alignedEndPositionInRead = getPositionInRead(record, record.getAlignmentEnd());
         int distance = Math.min(positionInRead - alignedStartPositionInRead, alignedEndPositionInRead - positionInRead) + 1;
         if (distance < 1)
         {
-        	String message = "Error: unexpected distance to alignment start/end for read " + record.getReadName() + " at " + chromosome + ":" + position;
-        	logger.error(message);
-        	throw new RuntimeException(message);
+            String message = "Error: unexpected distance to alignment start/end for read " + record.getReadName() + " at " + chromosome + ":" + position;
+            logger.error(message);
+            throw new RuntimeException(message);
         }
         return distance;
     }
