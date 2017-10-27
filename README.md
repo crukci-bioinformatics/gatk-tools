@@ -34,7 +34,7 @@ be installed separately as shown in the following instructions.
 2. Install the GATK jar file to the local Maven repository (substituting the
 version and path to the GATK jar as appropriate)
 
-        mvn install:install-file -Dpackaging=jar -DgroupId=org.broadinstitute.gatk -DartifactId=gatk -Dversion=3.6 -Dfile=GenomeAnalysisTK.jar
+        mvn install:install-file -Dpackaging=jar -DgroupId=org.broadinstitute.gatk -DartifactId=gatk -Dversion=3.8 -Dfile=GenomeAnalysisTK.jar
 
 3. Build and package the gatk-tools package
 
