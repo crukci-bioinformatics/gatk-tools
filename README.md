@@ -1,10 +1,11 @@
-###gatk-tools: Utilities for processing sequencing data and genomic variants using GATK
+gatk-tools: Utilities for processing sequencing data and genomic variants using GATK
+====================================================================================
 
 This package contains some utilities for processing sequencing data and genomic
 variants using the framework provided by the
 [Genome Analysis Toolkit](http://www.broadinstitute.org/gatk) (GATK). 
 
-####Installing and running gatk-tools
+### Installing and running gatk-tools
 
 Please see [README](docs/README) file for more information on the utilities available
 within the package and details of how to install and run the tools from a
@@ -13,7 +14,7 @@ within the package and details of how to install and run the tools from a
 For more information on the utilities available in this package, and how to
 install and run these tools, please see the [README](docs/README) file.
 
-####Building from source
+### Building from source
 
 The gatk-tools package is built using Apache Maven, a software project
 management and build automation tool. Details on how to install and run Maven
