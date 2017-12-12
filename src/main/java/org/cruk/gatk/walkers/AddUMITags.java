@@ -17,15 +17,20 @@ import htsjdk.samtools.SAMFileWriter;
 import htsjdk.samtools.util.SequenceUtil;
 
 /**
- * GATK read walker for adding UMI tags to records within a BAM file where the
- * unique molecular index or barcode is the first N bases in the read sequence.
+ * GATK read walker for adding unique molecular identifier (UMI) tags to records
+ * within a BAM file where the UMI or barcode is the first N bases in the read
+ * sequence.
  *
- * This utility was written to add 6-base barcodes from the beginning of each
- * read to the alignment records so that these can be taken into consideration
- * when duplicate marking with Picard MarkDuplicates.
+ * This utility was written to add UMI tags for sequence data generated from
+ * libraries prepared with the Rubicon ThruPLEX Tag-seq kit. The first 6 bases
+ * at the beginning of each read constitute the unique molecular identifier in
+ * this case. Adding the barcode sequence for each read allows for duplicate
+ * marking that takes molecular barcodes into account, e.g. using the Picard
+ * MarkDuplicates tool.
  *
- * Note that this does not add UMI tags to secondary or supplementary alignment
- * records.
+ * Note that this walker does not add UMI tags to secondary or supplementary
+ * alignment records. These are not normally marked as duplicates by Picard
+ * MarkDuplicates where the data are in coordinate sort order.
  *
  * @author eldrid01
  */
